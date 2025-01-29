@@ -17,7 +17,7 @@ Given('I am on the Automation Practice page', function(){
     cy.get('@radioBtn2Locator').click().should('be.checked')
 
     //click on radio button 3
-    cy.get('@radioBtn3Locator').click().should('be.checked')
+    cy.get('@radioBtn3Locator').click().should('be.checked').and('have.value','radio3')
     cy.get('@radioBtn1Locator').should('not.be.checked')
     cy.get('@radioBtn2Locator').should('not.be.checked')
 
