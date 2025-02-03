@@ -1,4 +1,4 @@
-// /// <reference types="Cypress"/>
+console.log// /// <reference types="Cypress"/>
 const { Given, When,Then, DataTable } = require("@badeball/cypress-cucumber-preprocessor");
 var assert = require('assert');
 const { log } = require("console");
@@ -67,7 +67,7 @@ When('I select checkbox {string}', function(option){
                 break;
             case"option3":
                 cy.get('@checkBox3Locator').check().should('have.value', option.toLowerCase()).then(function(){
-                removeItem('option3')
+                //removeItem('option3')
                 cy.log('Unseleted checkboxes = ')
                 displayList()
 
@@ -108,9 +108,14 @@ cy.log("List length= "+unselectedCheckboxes.length)
 
 
 function removeItem(item){
-    let index = unselectedCheckboxes.indexOf(item)
-    cy.log('index ='+index)
-    //unselectedCheckboxes.splice(index,1)
+    let index = unselectedCheckboxes.indexOf(item);
+    if (index !== -1) {
+        unselectedCheckboxes.splice(index, 1);
+        console.log(`${item} removed from the list.`);
+    } else {
+        console.log(`${item} not found in the list.`);
+    }
+
 }
 
 
