@@ -1,5 +1,12 @@
-/// <reference types="Cypress"/>
+// /// <reference types="Cypress"/>
 const { Given, When,Then, DataTable } = require("@badeball/cypress-cucumber-preprocessor");
+var assert = require('assert');
+const { log } = require("console");
+const { closeSync } = require("fs");
+
+  //Keep track of which checkboxes have been selected
+
+let unselectedCheckboxes = ['option1', 'option2', 'option3']
 
 Given('I am on the Automation Practice page', function(){
     cy.visit("https://rahulshettyacademy.com/AutomationPractice/")
@@ -21,32 +28,90 @@ Given('I select various radio buttons', function(){
     cy.get('@radioBtn1Locator').should('not.be.checked')
     cy.get('@radioBtn2Locator').should('not.be.checked')
 
+       
 })
 
+
+
+
+
 When('I select checkbox {string}', function(option){
+    
+    
     //Set locator values
     cy.get("[id='checkbox-example'] [name='checkBoxOption1']").as('checkBox1Locator')
-    cy.get("[id='checkbox-example'] [name='checkBoxOption2'").as('checkBox2Locator')
-    cy.get("[id='checkbox-example'] [name='checkBoxOption3'").as('checkBox3Locator')
+    cy.get("[id='checkbox-example'] [name='checkBoxOption2']").as('checkBox2Locator')
+    cy.get("[id='checkbox-example'] [name='checkBoxOption3']").as('checkBox3Locator')
+
+    displayList()
 
     //Click on given checkbox
     switch(option.toLowerCase())
     {
+        
         case "option1":
-            cy.get('@checkBox1Locator').check().should('have.value', option.toLowerCase())
+            cy.get('@checkBox1Locator').check().should('have.value', option.toLowerCase()).then(function() {
+                
+                removeItem('option1');
+                displayList(); 
+                cy.log('List is'+unselectedCheckboxes)
+                
+            });
             break;
+
             case "option2":
-                cy.get('@checkBox2Locator').check().should('have.value', option.toLowerCase())
+                    cy.get('@checkBox2Locator').check().should('have.value', option.toLowerCase()).then(function() {
+                    removeItem('option2');
+                    displayList();                    
+                });
                 break;
-                case"option3":
-                cy.get('@checkBox3Locator').check().should('have.value', option.toLowerCase())
+            case"option3":
+                cy.get('@checkBox3Locator').check().should('have.value', option.toLowerCase()).then(function(){
+                removeItem('option3')
+                cy.log('Unseleted checkboxes = ')
+                displayList()
+
+                })
                 break;
-                default:
-                    cy.log("Invalid input "+option)
+            default:
+                cy.log("Invalid input "+option)
     } 
 
-    
+   
 })
+
+
+When ('only {string} remains unselected', function(unselectedItem){
+    cy.log('unselected= '+unselectedItem)
+    cy.log('List is'+unselectedCheckboxes)
+    assert(unselectedCheckboxes.includes(unselectedItem.toLowerCase()))
+
+    //consider changing this to assert that unselected should('be.unchecked') or similar. Perhaps loop around the uncheckeditems list
+
+})
+
+
+
+// Function to display the list
+function displayList() {
+cy.log("List length= "+unselectedCheckboxes.length)
+
+    if (unselectedCheckboxes.length === 0) {
+        cy.log("The list is empty.");
+    } else {
+        cy.log("Current List:");
+       return unselectedCheckboxes.forEach((item, index) => {
+            cy.log(`${index + 1}. ${item}`);
+        });
+    }
+}
+
+
+function removeItem(item){
+    let index = unselectedCheckboxes.indexOf(item)
+    cy.log('index ='+index)
+    //unselectedCheckboxes.splice(index,1)
+}
 
 
 
