@@ -1,14 +1,20 @@
 console.log// /// <reference types="Cypress"/>
-const { Given, When,Then, DataTable } = require("@badeball/cypress-cucumber-preprocessor");
+const { Given, When,Then, DataTable, Before} = require("@badeball/cypress-cucumber-preprocessor");
 var assert = require('assert');
 const { log } = require("console");
-const { closeSync } = require("fs");
+const { beforeEach } = require("mocha");
 
-  //Keep track of which checkboxes have been selected
 
 let unselectedCheckboxes = ['option1', 'option2', 'option3']
 
-Given('I am on the Automation Practice page', function(){
+beforeEach(() => {
+    cy.log("Running before each test...");
+    
+    unselectedCheckboxes = ['option1', 'option2', 'option3']
+  });
+
+
+  Given('I am on the Automation Practice page', function(){
     cy.visit("https://rahulshettyacademy.com/AutomationPractice/")
 })
 
@@ -32,17 +38,14 @@ Given('I select various radio buttons', function(){
 })
 
 
-
-
-
 When('I select checkbox {string}', function(option){
-    
-    
+        
     //Set locator values
     cy.get("[id='checkbox-example'] [name='checkBoxOption1']").as('checkBox1Locator')
     cy.get("[id='checkbox-example'] [name='checkBoxOption2']").as('checkBox2Locator')
     cy.get("[id='checkbox-example'] [name='checkBoxOption3']").as('checkBox3Locator')
 
+    //display list of unselected checkboxes
     displayList()
 
     //Click on given checkbox
@@ -50,6 +53,8 @@ When('I select checkbox {string}', function(option){
     {
         
         case "option1":
+            //When moving away from cypress commands and start using javascript code, need to add .then(function(){...}) 
+            //at the cypress command chain.
             cy.get('@checkBox1Locator').check().should('have.value', option.toLowerCase()).then(function() {
                 
                 removeItem('option1');
@@ -62,14 +67,16 @@ When('I select checkbox {string}', function(option){
             case "option2":
                     cy.get('@checkBox2Locator').check().should('have.value', option.toLowerCase()).then(function() {
                     removeItem('option2');
-                    displayList();                    
+                    displayList();  
+                    cy.log('List is'+unselectedCheckboxes)                  
                 });
                 break;
             case"option3":
                 cy.get('@checkBox3Locator').check().should('have.value', option.toLowerCase()).then(function(){
-                //removeItem('option3')
-                cy.log('Unseleted checkboxes = ')
+                removeItem('option3')
+                cy.log('Unselected checkboxes = ')
                 displayList()
+                cy.log('List is'+unselectedCheckboxes)
 
                 })
                 break;
@@ -84,16 +91,30 @@ When('I select checkbox {string}', function(option){
 When ('only {string} remains unselected', function(unselectedItem){
     cy.log('unselected= '+unselectedItem)
     cy.log('List is'+unselectedCheckboxes)
-    assert(unselectedCheckboxes.includes(unselectedItem.toLowerCase()))
 
-    //consider changing this to assert that unselected should('be.unchecked') or similar. Perhaps loop around the uncheckeditems list
+    //Using javascript assert. OK seems to be its version of TRUE
+    assert.ok(unselectedCheckboxes.includes(unselectedItem.toLowerCase()), "Assert message: incorrect checkbox unselected ")
+
+})
+
+
+
+
+When('a simpler approach for only {string} remains unselected', function(unselectedItem){
+    var optionString = capitalizeFirstLetter(unselectedItem)
+    var locatorString = "[id='checkbox-example'] [name='checkBox" + optionString + "']"
+    
+    cy.get(locatorString).should('not.be.checked')
+    cy.log("optionstring "+optionString)
+    cy.log("locatorstring "+ locatorString)
+
 
 })
 
 
 
 // Function to display the list
-function displayList() {
+function  displayList() {
 cy.log("List length= "+unselectedCheckboxes.length)
 
     if (unselectedCheckboxes.length === 0) {
@@ -116,7 +137,13 @@ function removeItem(item){
         console.log(`${item} not found in the list.`);
     }
 
+    
+
 }
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
 
 
 
