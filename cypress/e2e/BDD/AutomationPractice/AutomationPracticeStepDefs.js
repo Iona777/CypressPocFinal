@@ -63,7 +63,6 @@ When('I select checkbox {string}', function(option){
                 
             });
             break;
-
             case "option2":
                     cy.get('@checkBox2Locator').check().should('have.value', option.toLowerCase()).then(function() {
                     removeItem('option2');
@@ -112,44 +111,70 @@ When('a simpler approach for only {string} remains unselected', function(unselec
 })
 
 
+When('I enter {string} in the country dynamic dropdown', function(country){
+
+//Set locator value for dropdown and enter given country
+cy.get('#autocomplete').as('countryDropdownLocator')
+cy.get('@countryDropdownLocator').type(country)
+
+
+//Set locator value for dropdown menu items and loop until given country is found 
+// then click on it
+cy.get('.ui-menu-item').as('countryMenuItems')
+cy.get('@countryMenuItems').each((el) =>{
+
+    if(el.text()==country)
+        { 
+            el.click()
+        }
+})
+
+
+})
+
+
+When ('I select dropdown option {string}', function(option){
+
+    //Set locator value
+    cy.get("[id='dropdown-class-example']").as('staticDropdown')
+
+    //Cypress will check both the value part an displayed text part of the dropdown for the
+    //given option and will match on either. The should('have.value', X) assertion will only
+    //check on the value part of the dropdown.
+    cy.get('@staticDropdown').select(option).should('have.value', option)
+
+})
+
+//Functions
+
 
 // Function to display the list
 function  displayList() {
-cy.log("List length= "+unselectedCheckboxes.length)
-
-    if (unselectedCheckboxes.length === 0) {
-        cy.log("The list is empty.");
-    } else {
-        cy.log("Current List:");
-       return unselectedCheckboxes.forEach((item, index) => {
-            cy.log(`${index + 1}. ${item}`);
-        });
-    }
-}
-
-
-function removeItem(item){
-    let index = unselectedCheckboxes.indexOf(item);
-    if (index !== -1) {
-        unselectedCheckboxes.splice(index, 1);
-        console.log(`${item} removed from the list.`);
-    } else {
-        console.log(`${item} not found in the list.`);
-    }
-
+    cy.log("List length= "+unselectedCheckboxes.length)
     
-
-}
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  }
-
-
-
-
-
-
-
-
-
+        if (unselectedCheckboxes.length === 0) {
+            cy.log("The list is empty.");
+        } else {
+            cy.log("Current List:");
+           return unselectedCheckboxes.forEach((item, index) => {
+                cy.log(`${index + 1}. ${item}`);
+            });
+        }
+    }
+    
+    // Function to remove item from the list
+    function removeItem(item){
+        let index = unselectedCheckboxes.indexOf(item);
+        if (index !== -1) {
+            unselectedCheckboxes.splice(index, 1);
+            console.log(`${item} removed from the list.`);
+        } else {
+            console.log(`${item} not found in the list.`);
+        }
+    
+    }
+    
+    // Function to capitalise the first letter of a given string
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+      }

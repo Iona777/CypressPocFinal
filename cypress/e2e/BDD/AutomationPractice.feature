@@ -22,4 +22,22 @@ Examples:
 |Option2        |Option3        |Option1            |
 |option1        |option2        |option3            |
 
+
+Scenario Outline: Select various values from static dropdown
+Given I am on the Automation Practice page
+When I select dropdown option "<Option>"
+Examples:
+|Option|
+|option3|
+|option2|
+|option1|
+
   
+Scenario Outline: Enter various countries in the dynamic dropdown
+Given I am on the Automation Practice page
+When I enter "<Country>" in the country dynamic dropdown
+Examples:
+    | Country               |    
+    | India                 |
+    | Canada                |
+    | United Kingdom (UK)   |
