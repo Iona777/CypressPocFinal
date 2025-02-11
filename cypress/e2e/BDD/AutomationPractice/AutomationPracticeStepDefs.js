@@ -1,4 +1,6 @@
-console.log// /// <reference types="Cypress"/>
+///<reference types="Cypress"/>
+
+
 const { Given, When,Then, DataTable, Before} = require("@badeball/cypress-cucumber-preprocessor");
 var assert = require('assert');
 const { log } = require("console");
@@ -6,6 +8,8 @@ const { beforeEach } = require("mocha");
 
 
 let unselectedCheckboxes = ['option1', 'option2', 'option3']
+
+
 
 beforeEach(() => {
     cy.log("Running before each test...");
@@ -16,14 +20,28 @@ beforeEach(() => {
 
   Given('I am on the Automation Practice page', function(){
     cy.visit("https://rahulshettyacademy.com/AutomationPractice/")
+
+//Set locators that can be found on entering the page
+cy.get("[id='radio-btn-example'] [value='radio1']").as('radioBtn1Locator')
+cy.get("[id='radio-btn-example'] [value='radio2']").as('radioBtn2Locator')
+cy.get("[id='radio-btn-example'] [value='radio3']").as('radioBtn3Locator')
+
+cy.get("[id='checkbox-example'] [name='checkBoxOption1']").as('checkBox1Locator')
+cy.get("[id='checkbox-example'] [name='checkBoxOption2']").as('checkBox2Locator')
+cy.get("[id='checkbox-example'] [name='checkBoxOption3']").as('checkBox3Locator')
+
+cy.get('#autocomplete').as('countryDropdownLocator')
+
+cy.get("[id='dropdown-class-example']").as('staticDropdown')
+
+cy.get('#hide-textbox').as('hide')
+cy.get('#displayed-text').as('showHideText')
+cy.get('#show-textbox').as('show')
+
 })
 
 Given('I select various radio buttons', function(){
-    //Set locator values
-    cy.get("[id='radio-btn-example'] [value='radio1']").as('radioBtn1Locator')
-    cy.get("[id='radio-btn-example'] [value='radio2']").as('radioBtn2Locator')
-    cy.get("[id='radio-btn-example'] [value='radio3']").as('radioBtn3Locator')
-
+    
     //click on radio button 1, then button 2
     cy.get('@radioBtn1Locator').click().should('be.checked')
     cy.wait(1000)
@@ -32,19 +50,12 @@ Given('I select various radio buttons', function(){
     //click on radio button 3
     cy.get('@radioBtn3Locator').click().should('be.checked').and('have.value','radio3')
     cy.get('@radioBtn1Locator').should('not.be.checked')
-    cy.get('@radioBtn2Locator').should('not.be.checked')
-
-       
+    cy.get('@radioBtn2Locator').should('not.be.checked')       
 })
 
 
 When('I select checkbox {string}', function(option){
         
-    //Set locator values
-    cy.get("[id='checkbox-example'] [name='checkBoxOption1']").as('checkBox1Locator')
-    cy.get("[id='checkbox-example'] [name='checkBoxOption2']").as('checkBox2Locator')
-    cy.get("[id='checkbox-example'] [name='checkBoxOption3']").as('checkBox3Locator')
-
     //display list of unselected checkboxes
     displayList()
 
@@ -93,10 +104,7 @@ When ('only {string} remains unselected', function(unselectedItem){
 
     //Using javascript assert. OK seems to be its version of TRUE
     assert.ok(unselectedCheckboxes.includes(unselectedItem.toLowerCase()), "Assert message: incorrect checkbox unselected ")
-
 })
-
-
 
 
 When('a simpler approach for only {string} remains unselected', function(unselectedItem){
@@ -106,44 +114,65 @@ When('a simpler approach for only {string} remains unselected', function(unselec
     cy.get(locatorString).should('not.be.checked')
     cy.log("optionstring "+optionString)
     cy.log("locatorstring "+ locatorString)
-
-
 })
 
 
 When('I enter {string} in the country dynamic dropdown', function(country){
 
-//Set locator value for dropdown and enter given country
-cy.get('#autocomplete').as('countryDropdownLocator')
+//Enter given country in dynamic dropdown
 cy.get('@countryDropdownLocator').type(country)
 
 
 //Set locator value for dropdown menu items and loop until given country is found 
 // then click on it
 cy.get('.ui-menu-item').as('countryMenuItems')
+
 cy.get('@countryMenuItems').each((el) =>{
 
     if(el.text()==country)
         { 
-            el.click()
+            //The click() method is deprecated in JQuery. Wrapping (like casting?) it with cy gets round this problem
+            cy.wrap(el).click()
         }
 })
-
 
 })
 
 
 When ('I select dropdown option {string}', function(option){
 
-    //Set locator value
-    cy.get("[id='dropdown-class-example']").as('staticDropdown')
-
-    //Cypress will check both the value part an displayed text part of the dropdown for the
+    //Cypress will check both the value part and displayed text part of the dropdown for the
     //given option and will match on either. The should('have.value', X) assertion will only
     //check on the value part of the dropdown.
     cy.get('@staticDropdown').select(option).should('have.value', option)
 
 })
+
+
+When ('I select hide', function(){
+
+cy.get('@hide').click()
+})
+
+
+Then('the the show hide example is invisible', function(){
+
+cy.get('@showHideText').should('not.be.visible')
+})
+
+
+When('I select show', function(){
+
+    cy.get('@show').click()
+})
+
+
+Then ('the the show hide example is visible', function(){
+
+cy.get('@showHideText').should('be.visible')
+})
+
+
 
 //Functions
 
