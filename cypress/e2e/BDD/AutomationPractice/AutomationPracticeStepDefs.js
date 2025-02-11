@@ -7,6 +7,7 @@ const { log } = require("console");
 const { beforeEach } = require("mocha");
 
 
+
 let unselectedCheckboxes = ['option1', 'option2', 'option3']
 
 
@@ -38,11 +39,15 @@ cy.get('#hide-textbox').as('hide')
 cy.get('#displayed-text').as('showHideText')
 cy.get('#show-textbox').as('show')
 
+cy.get('#alertbtn').as('alertButton')
+cy.get('#confirmbtn').as('confirmButton')
+
 })
 
 Given('I select various radio buttons', function(){
     
     //click on radio button 1, then button 2
+    //Note: you can use iether click() or check() with radio buttons.
     cy.get('@radioBtn1Locator').click().should('be.checked')
     cy.wait(1000)
     cy.get('@radioBtn2Locator').click().should('be.checked')
@@ -66,7 +71,8 @@ When('I select checkbox {string}', function(option){
         case "option1":
             //When moving away from cypress commands and start using javascript code, need to add .then(function(){...}) 
             //at the cypress command chain.
-            cy.get('@checkBox1Locator').check().should('have.value', option.toLowerCase()).then(function() {
+            //If an element is covering another you can use {force:true} to make it wait until can interact with it
+            cy.get('@checkBox1Locator').check({force:true}).should('have.value', option.toLowerCase()).then(function() {
                 
                 removeItem('option1');
                 displayList(); 
@@ -150,26 +156,49 @@ When ('I select dropdown option {string}', function(option){
 
 
 When ('I select hide', function(){
-
-cy.get('@hide').click()
+    cy.get('@hide').click()
 })
 
 
 Then('the the show hide example is invisible', function(){
-
-cy.get('@showHideText').should('not.be.visible')
+    cy.get('@showHideText').should('not.be.visible')
 })
 
 
 When('I select show', function(){
-
     cy.get('@show').click()
 })
 
 
 Then ('the the show hide example is visible', function(){
+    cy.get('@showHideText').should('be.visible')
+})
 
-cy.get('@showHideText').should('be.visible')
+
+
+When('I click on alert button and check its text', function(){
+    cy.get('@alertButton').click()
+
+    //Window: alert
+    cy.on('window:alert', (str)=>
+    {
+        expect(str).to.equal('Hello , share this practice page and share your knowledge')
+    }
+    )
+
+})
+
+When ('I click on the confirm button and check its text', function(){
+    
+    cy.get('@confirmButton').click()
+    //A confirm box displays a message with "OK" and "Cancel" buttons. 
+    // You can handle it by returning false to dismiss the alert
+
+    cy.on('window:confirm', function(text){
+        assert.strictEqual(text, 'Hello , Are you sure you want to confirm?')
+        return false //Dismiss the alert
+    })
+
 })
 
 

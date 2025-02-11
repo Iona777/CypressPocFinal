@@ -53,3 +53,8 @@ When I select hide
 Then the the show hide example is invisible
 When I select show
 Then the the show hide example is visible
+
+
+Scenario: Trigger alert and get its text
+When I click on alert button and check its text
+And I click on the confirm button and check its text
