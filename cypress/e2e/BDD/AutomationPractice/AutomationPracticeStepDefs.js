@@ -6,10 +6,7 @@ var assert = require('assert');
 const { log } = require("console");
 const { beforeEach } = require("mocha");
 
-
-
 let unselectedCheckboxes = ['option1', 'option2', 'option3']
-
 
 
 beforeEach(() => {
@@ -20,7 +17,8 @@ beforeEach(() => {
 
 
   Given('I am on the Automation Practice page', function(){
-    cy.visit("https://rahulshettyacademy.com/AutomationPractice/")
+        cy.visit("https://rahulshettyacademy.com/AutomationPractice/")
+    
 
 //Set locators that can be found on entering the page
 cy.get("[id='radio-btn-example'] [value='radio1']").as('radioBtn1Locator')
@@ -41,6 +39,8 @@ cy.get('#show-textbox').as('show')
 
 cy.get('#alertbtn').as('alertButton')
 cy.get('#confirmbtn').as('confirmButton')
+
+cy.get('#opentab').as('openTabButton')
 
 })
 
@@ -183,8 +183,7 @@ When('I click on alert button and check its text', function(){
     cy.on('window:alert', (str)=>
     {
         expect(str).to.equal('Hello , share this practice page and share your knowledge')
-    }
-    )
+    })
 
 })
 
@@ -201,9 +200,112 @@ When ('I click on the confirm button and check its text', function(){
 
 })
 
+When ('I test tabs', function(){
 
+//Calls the JQuery invoke() method to remove the target attribute 
+// so that the link will no longer be opened in a separate tab.
+//Now you can click on the openTabButton
+cy.get('@openTabButton').invoke('removeAttr', 'target').click()
+
+//Clicking on this will take you to a different domain. To handle this, you need this code. 
+// This will set the origin to the new domain and you include a function with all the code 
+//that you want to run in this domain.
+cy.origin("https://www.qaclickacademy.com", function(){
+    //Using *=  appears to mean 'contains'
+    cy.get("#navbarSupportedContent  a[href*='about']").click()
+    cy.get('.mt-50 h2').should('contain', 'QAClick Academy')
+
+})
+
+})
+
+
+
+When ('I test tables', function(){
+    //Gets all rows (tr) then all the columns within each row (td) 
+    // then just the 2nd column (nth-child(2))
+ 
+
+    //cy.get('tr td:nth-child(2)').each((el,index) =>{
+    cy.get('tr td:nth-child(2)').each(function(element,index){
+
+    const text=element.text()
+    if(text.includes('Python'))
+    {
+        //This will return the element based on the index of the iteration and then get 
+        //its next sibling.
+        //The returned element will be called price and passed into the following function
+        cy.get('tr td:nth-child(2)').eq(index).next().then(function(price){
+
+            const priceText = price.text()
+            expect(priceText).to.equal('25')
+        })
+    }
+
+    getTableRow(3)
+    let tableText = getTextOfRowColumn(3,2)
+    //May need to put this into a commmand: See cours on commands
+
+    /*
+    Cypress.Commands.add('getTableCellText', (tableSelector, rowIndex, colIndex) => {
+        cy.get(`${tableSelector} tbody tr`) // Get all table rows in tbody
+          .eq(rowIndex - 1) // Select the mth row (0-based index)
+          .find('td') // Find all columns in that row
+          .eq(colIndex - 1) // Select the nth column (0-based index)
+          .invoke('text') // Get text content
+          .then((text) => {
+            cy.log(`Cell text: ${text.trim()}`); // Log the extracted text
+            return text.trim();
+          });
+      });
+      
+      // Usage example:
+      cy.getTableCellText('table', 2, 3).then((cellText) => {
+        expect(cellText).to.equal('Expected Value');
+      });
+      
+*/
+
+    console.log('Table text is: '+ tableText)
+
+})
+
+})
 
 //Functions
+
+function getTableRow(rowNo)
+{
+
+    //Mabye don't need each here
+       cy.get('tr').each( (el)=>{
+       cy.get('td').eq(rowNo).then(function(priceEl)
+       {
+            const priceText = priceEl.text()
+            expect(priceText).to.equal('Rahul Shetty')
+       })
+
+       })
+}
+
+function getTextOfRowColumn(rowIndex, colIndex)
+{
+
+    //cy.get(`${tableSelector} tbody tr`) // Get all table rows in tbody
+    cy.get('tr')
+    .eq(rowIndex - 1) // Select the mth row (0-based index)
+    .find('td') // Find all columns in that row
+    .eq(colIndex - 1) // Select the nth column (0-based index)
+    .invoke('text') // Get text content
+    .then((text) => {
+      cy.log(`Cell text: ${text.trim()}`); // Log the extracted text
+      return text.trim();
+    });
+
+
+}
+
+
 
 
 // Function to display the list
