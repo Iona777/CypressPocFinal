@@ -6,6 +6,7 @@ var assert = require('assert');
 const { log } = require("console");
 const { beforeEach } = require("mocha");
 
+
 let unselectedCheckboxes = ['option1', 'option2', 'option3']
 
 
@@ -219,92 +220,48 @@ cy.origin("https://www.qaclickacademy.com", function(){
 
 })
 
+When('I check that the price of the course {string} is {string}',function(course, expectedPrice){
 
-
-When ('I test tables', function(){
     //Gets all rows (tr) then all the columns within each row (td) 
     // then just the 2nd column (nth-child(2))
- 
-
-    //cy.get('tr td:nth-child(2)').each((el,index) =>{
     cy.get('tr td:nth-child(2)').each(function(element,index){
 
-    const text=element.text()
-    if(text.includes('Python'))
-    {
-        //This will return the element based on the index of the iteration and then get 
-        //its next sibling.
-        //The returned element will be called price and passed into the following function
-        cy.get('tr td:nth-child(2)').eq(index).next().then(function(price){
-
-            const priceText = price.text()
-            expect(priceText).to.equal('25')
-        })
-    }
-
-    getTableRow(3)
-    let tableText = getTextOfRowColumn(3,2)
-    //May need to put this into a commmand: See cours on commands
-
-    /*
-    Cypress.Commands.add('getTableCellText', (tableSelector, rowIndex, colIndex) => {
-        cy.get(`${tableSelector} tbody tr`) // Get all table rows in tbody
-          .eq(rowIndex - 1) // Select the mth row (0-based index)
-          .find('td') // Find all columns in that row
-          .eq(colIndex - 1) // Select the nth column (0-based index)
-          .invoke('text') // Get text content
-          .then((text) => {
-            cy.log(`Cell text: ${text.trim()}`); // Log the extracted text
-            return text.trim();
-          });
-      });
-      
-      // Usage example:
-      cy.getTableCellText('table', 2, 3).then((cellText) => {
-        expect(cellText).to.equal('Expected Value');
-      });
-      
-*/
-
-    console.log('Table text is: '+ tableText)
-
+        const text=element.text()
+    
+        //Can also use text.includes() if you want to check if the element text contains a given string.
+        //if(text.includes('Master Selenium Automation in simple Python Language'))
+        if (text== course)
+        {
+            //This will return the element based on the index of the iteration and then get 
+            //its next sibling.
+            //The returned element will be called price and passed into the following function
+            cy.get('tr td:nth-child(2)').eq(index).next().then(function(actualPrice){
+    
+                const actualPriceText = actualPrice.text()
+                expect(actualPriceText).to.equal(expectedPrice)
+            })
+        }
+    
+    })
+    
 })
 
+
+When('I check that the text in column {int} of row {int} is {string}', function(columnNo,rowNo, expectedText ){
+  // Variables for row and column indexes
+  //row (0-based index, BUT frist row here is the header, so no need to reduce by 1)
+  // nth column (0-based index, so reduce given value by 1)
+ 
+  //'table' happens to be the locator for the table
+   cy.get('table').find('tr').eq(rowNo).find('td').eq(columnNo-1).invoke('text').then((text) => {
+   expect(text).to.equal(expectedText)
+
+ })
+
+ 
+
+
 })
-
-//Functions
-
-function getTableRow(rowNo)
-{
-
-    //Mabye don't need each here
-       cy.get('tr').each( (el)=>{
-       cy.get('td').eq(rowNo).then(function(priceEl)
-       {
-            const priceText = priceEl.text()
-            expect(priceText).to.equal('Rahul Shetty')
-       })
-
-       })
-}
-
-function getTextOfRowColumn(rowIndex, colIndex)
-{
-
-    //cy.get(`${tableSelector} tbody tr`) // Get all table rows in tbody
-    cy.get('tr')
-    .eq(rowIndex - 1) // Select the mth row (0-based index)
-    .find('td') // Find all columns in that row
-    .eq(colIndex - 1) // Select the nth column (0-based index)
-    .invoke('text') // Get text content
-    .then((text) => {
-      cy.log(`Cell text: ${text.trim()}`); // Log the extracted text
-      return text.trim();
-    });
-
-
-}
-
 
 
 

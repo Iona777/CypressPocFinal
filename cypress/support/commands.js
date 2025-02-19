@@ -23,3 +23,16 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('getTableCellText', (tableSelector, rowIndex, colIndex) => {
+    cy.get(`${tableSelector} tbody tr`) // Get all table rows in tbody
+      .eq(rowIndex - 1) // Select the mth row (0-based index)
+      .find('td') // Find all columns in that row
+      .eq(colIndex - 1) // Select the nth column (0-based index)
+      .invoke('text') // Get text content
+      .then((text) => {
+        cy.log(`Cell text: ${text.trim()}`); // Log the extracted text
+        return text.trim();
+      });
+  });
+  
