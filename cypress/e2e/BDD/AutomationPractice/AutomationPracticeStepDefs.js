@@ -258,11 +258,27 @@ When('I check that the text in column {int} of row {int} is {string}', function(
 
  })
 
- 
+})
 
+When ('I check that the text in column {int} of row {int} contains {string} using a function', function(colNo, rowNo, expectedText)
+{
+    //Basically the same as test above, except it calls a re-usable function
+    checkGivenColumnAndRowContainsValue(colNo,rowNo, expectedText)
 
 })
 
+
+//FUNCTIONS
+
+
+//Function to check value of a table cell
+function checkGivenColumnAndRowContainsValue(colNo, rowNo, expectedText)
+{
+    cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo-1).invoke('text').then((text) => {
+        expect(text).to.contain(expectedText)    
+      })
+     
+} 
 
 
 // Function to display the list
