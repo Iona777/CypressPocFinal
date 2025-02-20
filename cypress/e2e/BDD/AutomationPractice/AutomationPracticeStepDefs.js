@@ -267,6 +267,26 @@ When ('I check that the text in column {int} of row {int} contains {string} usin
 
 })
 
+When('I hover over Mouse Hover element and select top from options', function(){
+
+    cy.get('div.mouse-hover-content').as('mouseHover')
+    cy.get('@mouseHover').invoke('show')
+
+    //Finds element that contains given text and clicks on it.
+    cy.contains('Top').click()
+    //Check value of URL in address bar
+    cy.url().should('include','top')
+
+})
+
+When('I forceably click on a hidden element', function(){
+
+    //Click on element, even though it is hidden
+    cy.contains('Top').click({force:true})
+    //Check value of URL in address bar
+    cy.url().should('include','top')
+})
+
 
 //FUNCTIONS
 
