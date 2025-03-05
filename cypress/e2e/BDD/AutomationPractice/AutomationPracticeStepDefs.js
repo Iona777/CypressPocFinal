@@ -1,9 +1,9 @@
 ///<reference types="Cypress"/>
-
+import 'cypress-iframe'
 
 const { Given, When,Then, DataTable, Before} = require("@badeball/cypress-cucumber-preprocessor");
 var assert = require('assert');
-const { log } = require("console");
+//const { log } = require("console");
 const { beforeEach } = require("mocha");
 
 
@@ -218,6 +218,11 @@ cy.origin("https://www.qaclickacademy.com", function(){
 
 })
 
+//Alternatively, instead of using 
+// invoke('removeAttr', 'target'), you can just navigate directly to the URL that would the openTabButton would take you to, 
+// and then apply cy.origin() as above. 
+
+
 })
 
 When('I check that the price of the course {string} is {string}',function(course, expectedPrice){
@@ -287,6 +292,23 @@ When('I forceably click on a hidden element', function(){
     cy.url().should('include','top')
 })
 
+
+When('I test iFrames', function(){
+
+    cy.visit("https://rahulshettyacademy.com/AutomationPractice/")
+    //Loads the given frame based on iframe Id. Cypress is now aware of this frame
+    cy.frameLoaded('#courses-iframe') 
+    //Puts Cypress into 'iframe mode' as it were. Finds given element in the iframe and clicks on it
+    //cy.iframe()
+    cy.iframe().find("a[href*='mentorship']").eq(0).click();
+    cy.iframe().find("a[href*='practice-project']")
+
+    cy.iframe().find(".row").should('have.length',11)
+
+    //This one does not work, just does not want to find this element, but cannot see why
+    //cy.iframe().find("h1[class*='pricing-title']").should('have.length',2)
+     
+})
 
 //FUNCTIONS
 

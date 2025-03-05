@@ -6,6 +6,12 @@ Practice various Automation features
 Background: Access landing page
 Given I am on the Automation Practice page
 
+
+
+Scenario: Testing iframes
+When I test iFrames
+
+
 Scenario: Mouse hover popups
 When I hover over Mouse Hover element and select top from options 
 When I forceably click on a hidden element
@@ -58,6 +64,7 @@ Scenario: Testing tables
 When I check that the price of the course "Master Selenium Automation in simple Python Language" is "25"
 When I check that the text in column 2 of row 10 is "Write effective QA Resume that will turn to interview call"
 Then I check that the text in column 2 of row 3 contains "Appium" using a function
+
 
 
 
