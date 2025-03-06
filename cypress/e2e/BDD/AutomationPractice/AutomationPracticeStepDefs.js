@@ -1,4 +1,4 @@
-///<reference types="Cypress"/>
+// ///<reference types="Cypress"/>  -including this seems to cause problems. I think it is already included as part of package file?
 import 'cypress-iframe'
 
 const { Given, When,Then, DataTable, Before} = require("@badeball/cypress-cucumber-preprocessor");
@@ -8,6 +8,10 @@ const { beforeEach } = require("mocha");
 
 
 let unselectedCheckboxes = ['option1', 'option2', 'option3']
+
+
+//May need to login before being able to access this though
+let offersPageURL = 'https://rahulshettyacademy.com/seleniumPractise/#/offers'
 
 
 beforeEach(() => {
@@ -270,6 +274,9 @@ When ('I check that the text in column {int} of row {int} contains {string} usin
     //Basically the same as test above, except it calls a re-usable function
     checkGivenColumnAndRowContainsValue(colNo,rowNo, expectedText)
 
+    //Or could do the same by putting the code in a cypress command
+    cy.checkTableCellText(colNo,rowNo, expectedText)
+
 })
 
 When('I hover over Mouse Hover element and select top from options', function(){
@@ -310,14 +317,57 @@ When('I test iFrames', function(){
      
 })
 
+
+When('I test calendars', function(){
+
+const monthNumber = "6"
+const day = "15"
+const year = "2027"
+const expectedDateList = [monthNumber, day, year]
+
+cy.visit(offersPageURL)
+cy.get('.react-date-picker__inputGroup').click()
+
+//The classname is quite long. Seems you get sometimes get away with a partial classname.
+cy.get('.react-calendar__navigation__label').click()
+//Click again
+cy.get('.react-calendar__navigation__label').click()
+
+//Finds all button tags that contain the text of the 'year' constant and clicks on the first one it finds. 
+// Should only be 1 that matches though
+cy.contains("button", year).click()
+
+//The class will get all the months. eq() will return the one with given index. Number converts the monthNumber string to a number 
+cy.get('.react-calendar__year-view__months__month').eq(Number(monthNumber)-1).click()
+
+//Finds all abbr tags that contain the text of the 'day' constant and clicks on the first one it finds
+// Should only be 1 that matches though
+cy.contains("abbr", day).click()
+
+ 
+//Assertion
+//This will get the 3 parts of the displayed data and then loop through each to check its value.
+cy.get("[class*='react-date-picker__inputGroup__input']").each(function(element, index)
+{
+  
+//We are in Jquery territory here, so the element is a 'promise' so need to resolve it to get actual element using wrap()
+//Then we invoke the JQuuery command 'val' to get the value attribute's contents
+cy.wrap(element).invoke('val').should('eq', expectedDateList[index])
+
+
+})
+
+
+})
+
 //FUNCTIONS
 
 
 //Function to check value of a table cell
 function checkGivenColumnAndRowContainsValue(colNo, rowNo, expectedText)
 {
-    cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo-1).invoke('text').then((text) => {
-        expect(text).to.contain(expectedText)    
+    cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo-1).invoke('text').then((actualText) => {
+        expect(actualText).to.contain(expectedText)    
       })
      
 } 
