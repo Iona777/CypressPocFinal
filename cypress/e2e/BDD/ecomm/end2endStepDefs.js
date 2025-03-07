@@ -41,6 +41,29 @@ Given(`I am on the ecommn practice login page`, () => {
         //We search for a descendant element with a tag of button that contains the text 'Add'
         cy.wrap(element).contains('button','Add').click()
     })
+
+    //Select the first product (has tag of app-card) and click on its Add button
+    cy.get('app-card').eq(0).contains('button','Add').click()
+    //Click on the checkout button. This time we find the a (anchor) tag and then look for element that contains 'Checkout' text
+    cy.contains('a', 'Checkout').click()
+
+
+    let sum = 0
+    //Get the value of total price of each product and check it is less than 200,000
+    cy.get('tr td:nth-child(4) strong').each(function(element){
+
+        //text to work on '₹. 65000'
+        //This will split the text on space. Then it will get the 2nd index and trim spaces and finally convert to a number
+        const amount = Number(element.text().split(" ")[1].trim())   
+        sum = sum + amount
+
+
+    }).then(function(){
+
+        expect(sum).to.be.lessThan(200000)
+    })
+
+
     
 
 
