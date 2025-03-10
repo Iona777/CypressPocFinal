@@ -63,8 +63,15 @@ Given(`I am on the ecommn practice login page`, () => {
         expect(sum).to.be.lessThan(200000)
     })
 
+    //Now click on Checkout button, enter a country and click on Purchase button
+    cy.contains('button', 'Checkout').click()
+    cy.get('#country').type('India')
+   
+    //This is slow to respond, so need in increase timeout just for this element
+    cy.get('.suggestions ul li a', { timeout: 10000 }).click()
 
-    
+    cy.contains('input','Purchase').click()
+    cy.get('.alert-success').should('contain', 'Success')
 
 
 });
