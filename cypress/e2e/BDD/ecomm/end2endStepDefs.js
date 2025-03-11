@@ -1,36 +1,53 @@
 const { Given, When, Then, DataTable, Before } = require("@badeball/cypress-cucumber-preprocessor");
 
+//There does not seem to an entry in @cucumber/cucumber for 'And', so set it be same as 'Then'
+const And = Then
+
+
+//Looks like typing 'import <classname>' will automatically find the page for you. 
+// So, this now appears to be the preferred method rather than using requires.
+import HomePage from "../../../support/pageObjects/homePage";
+import ProductPage from "../../../support/pageObjects/ProductPage";
+import CartPage from "../../../support/pageObjects/CartPage";
+import ConfirmationPage from "../../../support/pageObjects/ConfirmationPage";
+
+
+const homePage = new HomePage();
+const productPage = new ProductPage() 
+const cartPage = new CartPage()  
+const confirmationPage = new ConfirmationPage()
+
+
 Given(`I am on the ecommn practice login page`, () => {
 
     const loginPageURL = 'https://rahulshettyacademy.com/loginpagePractise/#'
     const productName = "Nokia Edge"
 
-    cy.visit(loginPageURL)
-
-
-    //Set locators that can be found on entering the page
-    cy.get('#username').as('userName')
-    cy.get('#password').as('password')
-
-    //Enter credentials
-    cy.get('@userName').type('rahulshettyacademy')
-    cy.get('@password').type('learning')
-
-    //Can use contains() to get element that contains the given visible text
-    cy.contains('Sign In').click()
-    cy.contains("Shop Name").should('be.visible')
-
-
+    homePage.goTo(loginPageURL)
+    homePage.login('rahulshettyacademy','learning' )
 
     //Product page
-    cy.get('app-card').should('have.length',4)
+    productPage.pageValidation()
+    productPage.verifyCardLimit()
+    productPage.selectProduct(productName)
+    productPage.selectFirstProduct()
+    productPage.goToCart()
+
+
+
+    
+
+
+
+    //cy.get('app-card').should('have.length',4)
 
     //filter() will return only those elements that match the given filter expression. This is easier to write then loop seen earlier
     //:contains() is a JQyuery command and needs to be proceeded by :
     //cy.get('app-card').filter(':contains("Nokia Edge")').then(function(element)
 
-    //To use a paramter tin the contains() command, you need to use "${parameterName}" .
+    //To use a paramter in the contains() command, you need to use "${parameterName}" .
     // You also need to wrap the whole expression with these strange quotes `  ` which are found on the key to the left of the 1 key 
+    /*
     cy.get('app-card').filter(`:contains("${productName}")`).then(function(element)
     {
         //Using :contains() puts into Jquery territory, so it will return a promise. So,need to use then() to resolve it. 
@@ -42,10 +59,13 @@ Given(`I am on the ecommn practice login page`, () => {
         cy.wrap(element).contains('button','Add').click()
     })
 
+    */
+
     //Select the first product (has tag of app-card) and click on its Add button
-    cy.get('app-card').eq(0).contains('button','Add').click()
+    //cy.get('app-card').eq(0).contains('button','Add').click()
+
     //Click on the checkout button. This time we find the a (anchor) tag and then look for element that contains 'Checkout' text
-    cy.contains('a', 'Checkout').click()
+    //cy.contains('a', 'Checkout').click()
 
 
     let sum = 0
