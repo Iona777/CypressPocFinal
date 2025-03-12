@@ -24,38 +24,41 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import { Then } from "@badeball/cypress-cucumber-preprocessor"
 
 
 //in the .add() method, pass in the command/method name and its parameters and then pass the (name, (parma1, parm2)) to body of the function
 
-Cypress.Commands.add('checkTableCellText', function(colNo, rowNo, expectedText){
+Cypress.Commands.add('checkTableCellText', function (colNo, rowNo, expectedText) {
 
-  cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo-1).invoke('text')
-  .then( (actualText) => {
-    expect(actualText).to.contain(expectedText)
+  cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo - 1).invoke('text')
+    .then((actualText) => {
+      expect(actualText).to.contain(expectedText)
 
+
+    })
 
   })
 
+  Cypress.Commands.add('submitFormDetails', function(){
 
-})
+     cy.get('#country').type('India')
+    //This is slow to respond, so need in increase timeout just for this element
+    cy.get('.suggestions ul li a', { timeout: 10000 }).click()
+    cy.contains('input','Purchase').click()
 
-
-/*
-Cypress.Commands.add('checkTableCellText', (colNo, rowNo, expectedText) => {
-
-  cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo-1).invoke('text').then((text) => {
-    expect(text).to.contain(expectedText)    
-  })
-
+    cy.log("Calling command")
     
-      });
+
+  })
+
+  Cypress.Commands.add('hello', () => {
+    cy.log("Hello there, said Obi Wan");
+});
 
 
 
 
 
-  });
-  */
- 
+   
+
+

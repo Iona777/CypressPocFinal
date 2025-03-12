@@ -65,7 +65,7 @@ When I test calendars
 #Scenario: Testing tables
 #When I check that the price of the course "Master Selenium Automation in simple Python Language" is "25"
 #When I check that the text in column 2 of row 10 is "Write effective QA Resume that will turn to interview call"
-#Then I check that the text in column 2 of row 3 contains "Appium" using a function
+Then I check that the text in column 2 of row 3 contains "Appium" using a function
 
 
 

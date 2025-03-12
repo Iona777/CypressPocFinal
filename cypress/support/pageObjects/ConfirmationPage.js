@@ -1,7 +1,21 @@
- class ConfirmationPage
- {
 
- }
+class ConfirmationPage
+{
+    
 
-//Don't forget the export or your class will not be found
-export default ConfirmationPage;
+//NOTE:
+//Cypress commands (e.g. cy.submitFormDetails()) can only be used inside methods, not directly within the class definition. 
+
+submitFormDetails(){
+
+    cy.submitFormDetails()
+}   
+
+getAlertMessage()
+{
+    return cy.get(".alert-success")
+}
+
+}
+
+export default ConfirmationPage

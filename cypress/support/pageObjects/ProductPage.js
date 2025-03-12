@@ -4,18 +4,22 @@ class ProductPage {
         cy.contains("Shop Name").should('be.visible')
     }
 
-    verifyCardLimit() {
-        cy.get('app-card').should('have.length', 4)
+    getCardCount() {
+        return cy.get('app-card').should('have.length', 4)
     }
 
 
     selectFirstProduct() {
         //Select the first product (has tag of app-card) and click on its Add button
+        
         cy.get('app-card').eq(0).contains('button', 'Add').click()
+        cy.debug()
     }
 
     selectProduct(productName) {
 
+         //filter() will return only those elements that match the given filter expression. This is easier to write then loop seen earlier
+        //:contains() is a JQyuery command and needs to be proceeded by :
         //To use a paramter in the contains() command, you need to use "${parameterName}" .
         // You also need to wrap the whole expression with these strange quotes `  ` which are found on the key to the left of the 1 key 
         cy.get('app-card').filter(`:contains("${productName}")`).then(function (element) {
