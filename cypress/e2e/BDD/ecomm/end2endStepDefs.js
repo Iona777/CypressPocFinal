@@ -11,7 +11,7 @@ const And = Then
 
 
 //Seems that you can user either import or requires here. I think it is only cypress's own files that can only use require
-import HomePage from '../../../support/pageObjects/homePage'
+import HomePage from '../../../support/pageObjects/HomePage'
 const ProductPage = require("../../../support/pageObjects/ProductPage")
 const CartPage = require("../../../support/pageObjects/CartPage")
 const ConfirmationPage = require("../../../support/pageObjects/ConfirmationPage")
@@ -25,11 +25,17 @@ const confirmationPage = new ConfirmationPage()
 
 Given(`I am on the ecommn practice login page`, () => {
 
-    const loginPageURL = 'https://rahulshettyacademy.com/loginpagePractise/#'
+    //const loginPageURL = 'https://rahulshettyacademy.com/loginpagePractise/#'
+
+    //NOTE: changes to cypress.config file are not always picked up on save, so you may get an undefined error when first using Cypress.env() 
+    // to fix this and pick up the changes, restart cypress runner, or even restart cypress completely. 
+    const baseURL= Cypress.env('url')
+    const loginPageURL = (baseURL+"/loginpagePractise/#")
     const productName = "Nokia Edge"
 
     homePage.goTo(loginPageURL)
-    homePage.login('rahulshettyacademy', 'learning')
+    //homePage.login('rahulshettyacademy', 'learning')
+    homePage.login(Cypress.env('userName'), Cypress.env('password'))
 
     //Product page
     productPage.pageValidation()

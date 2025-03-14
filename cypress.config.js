@@ -22,6 +22,14 @@ async function setupNodeEvents(on, config) {
 }
 
 module.exports = defineConfig({
+  
+  env:{
+    url: 'https://rahulshettyacademy.com',
+    userName: "rahulshettyacademy",
+    password: "learning"
+  }
+  ,
+  
   e2e: {
     setupNodeEvents(on, config) {
       // implement node event listeners here
