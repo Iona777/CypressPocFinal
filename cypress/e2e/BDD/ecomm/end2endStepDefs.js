@@ -25,40 +25,70 @@ const confirmationPage = new ConfirmationPage()
 
 Given(`I am on the ecommn practice login page`, () => {
 
-    //const loginPageURL = 'https://rahulshettyacademy.com/loginpagePractise/#'
-
     //NOTE: changes to cypress.config file are not always picked up on save, so you may get an undefined error when first using Cypress.env() 
     // to fix this and pick up the changes, restart cypress runner, or even restart cypress completely. 
-    const baseURL= Cypress.env('url')
-    const loginPageURL = (baseURL+"/loginpagePractise/#")
-    const productName = "Nokia Edge"
+    const baseURL = Cypress.env('url')
+    const loginPageURL = (baseURL + "/loginpagePractise/#")
 
     homePage.goTo(loginPageURL)
-    //homePage.login('rahulshettyacademy', 'learning')
+
+})
+
+
+When('I login to the application', function () {
+
     homePage.login(Cypress.env('userName'), Cypress.env('password'))
 
     //Product page
     productPage.pageValidation()
     productPage.getCardCount().should('have.length', 4)
+
+})
+
+When('I login to the application portal', function(dataTable){
+
+    homePage.login(dataTable.rawTable[1][0],dataTable.rawTable[1][1])
+
+    //Product page
+    productPage.pageValidation()
+    productPage.getCardCount().should('have.length', 4)
+
+})
+
+
+And('I add items to Cart and checkout', function () {
+    const productName = "Nokia Edge"
+
     productPage.selectProduct(productName)
     productPage.selectFirstProduct()
     productPage.goToCart()
 
+})
+
+And('Validate the total price limit', function () {
     //Seems not to pause, just puts output to consol (not cypress console)
     cy.debug()
 
     //Cart page
     cartPage.sumOfProducts().then(function (sum) {
-        //Putting the assertion in the test insstead of the function
-        expect(sum).to.be.lessThan(200000)
+    //Putting the assertion in the test insstead of the function
+    expect(sum).to.be.lessThan(200000)
+
     })
 
+})
+
+Then('select the country submit and verify success message', function () {
     cartPage.clickOnCheckoutButton()
 
     //Confirmation page
     confirmationPage.submitFormDetails()
     confirmationPage.getAlertMessage().should('contain', 'Success')
+})
 
-});
+
+And ('I add the following items to Cart and checkout {string}, {string}, {string}', function(item1, item2, item3)
+{
 
 
+})

@@ -8,6 +8,12 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run"
   },
+  "cypress-cucumber-preprocessor": {
+    "json": {
+      "enabled": true,
+      "output": "cypress/cucumberReports/results.json"
+    }
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -17,6 +23,6 @@
   },
   "devDependencies": {
     "cypress-iframe": "^1.0.1",
-    "cypress-mochawesome-reporter": "1.5.3"
+    "multiple-cucumber-html-reporter": "^3.9.2"
   }
 }

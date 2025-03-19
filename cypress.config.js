@@ -17,21 +17,16 @@ async function setupNodeEvents(on, config) {
     browserify(preprendTransformerToOptions(config, browserify.defaultOptions)),
   );
 
+
+  // implement node event listeners here
+  
   // Make sure to return the config object as it might have been modified by the plugin.
   return config;
 }
 
 module.exports = defineConfig({
 
-  reporter: 'cypress-mochawesome-reporter',
-
-  reporterOptions: {
-    reportDir: "cypress/reports",
-    overwrite: false,
-    html: true,
-    json: true
-  },
-  
+    
   env:{
     url: 'https://rahulshettyacademy.com',
     userName: "rahulshettyacademy",
@@ -40,10 +35,14 @@ module.exports = defineConfig({
   ,
   
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-      require('cypress-mochawesome-reporter/plugin')(on);
+
+    /* Covered above I think. Just call the function
+    setupNodeEvents(on, config) { 
     },
+    */
+
+    setupNodeEvents,
+
     //specPattern: "cypress/e2e/*js",
     specPattern: "**/*.feature",
     supportFile: "cypress/support/e2e.js",
