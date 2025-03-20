@@ -20,10 +20,10 @@ class ProductPage {
 
          //filter() will return only those elements that match the given filter expression. This is easier to write then loop seen earlier
         //:contains() is a JQyuery command and needs to be proceeded by :
-        //To use a paramter in the contains() command, you need to use "${parameterName}" .
+        //To use a parameter in the contains() command, you need to use "${parameterName}" .
         // You also need to wrap the whole expression with these strange quotes `  ` which are found on the key to the left of the 1 key 
         cy.get('app-card').filter(`:contains("${productName}")`).then(function (element) {
-            //Using :contains() puts into Jquery territory, so it will return a promise. So,need to use then() to resolve it. 
+            //Using :contains() puts you into Jquery territory, so it will return a promise. So,need to use then() to resolve it. 
             // We use cy.wrap() so that we can again use cypress methods on the element.
             cy.wrap(element).should('have.length', 1)
 
@@ -32,6 +32,11 @@ class ProductPage {
             cy.wrap(element).contains('button', 'Add').click()
         })
 
+    }
+    verifyNumberOfItems(expectedNumerOfItems)
+    {
+
+        cy.contains('a', 'Checkout').should('contain', expectedNumerOfItems)
     }
     
     goToCart()

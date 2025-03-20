@@ -42,6 +42,7 @@ When('I login to the application', function () {
     //Product page
     productPage.pageValidation()
     productPage.getCardCount().should('have.length', 4)
+    
 
 })
 
@@ -87,8 +88,32 @@ Then('select the country submit and verify success message', function () {
 })
 
 
-And ('I add the following items to Cart and checkout {string}, {string}, {string}', function(item1, item2, item3)
+ And ('I add the following items to Cart and checkout {string}, {string}, {string}', function(item1, item2, item3)
+{
+    productPage.selectProduct(item1)
+    productPage.selectProduct(item2)
+    productPage.selectProduct(item3)
+    productPage.verifyNumberOfItems(3)
+
+    productPage.goToCart()
+
+})
+
+And('I take note of sum of products', function(){
+
+cartPage.getTotalCost()
+
+})
+
+And ('I change the quantity of each item to {int}', function(newQuantity){
+
+    cartPage.amendQuantity(newQuantity)
+
+})
+
+And ('I remove {string}', function(itemToRemove)
 {
 
+    cartPage.removeItem(itemToRemove)
 
 })

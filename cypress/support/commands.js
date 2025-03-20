@@ -28,16 +28,27 @@
 
 //in the .add() method, pass in the command/method name and its parameters and then pass the (name, (parma1, parm2)) to body of the function
 
-Cypress.Commands.add('checkTableCellText', function (colNo, rowNo, expectedText) {
+Cypress.Commands.add('getTableCellText', function (colNo, rowNo,) {
 
-  cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo - 1).invoke('text')
-    .then((actualText) => {
-      expect(actualText).to.contain(expectedText)
-
-
-    })
-
+  //This boils down to:
+  //Cy.get().find() etc. - gets cell element
+  //.invoke - calls the JQuery text command to return the text of the element
+   return cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo - 1)
+   .invoke('text')
   })
+
+   Cypress.Commands.add('checkTableCellText', function (colNo, rowNo,expectedText) {
+
+    cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo - 1).invoke('text')
+      .then((actualText) => {
+
+        cy.log("text is "+ actualText)
+        expect(actualText).to.contain(expectedText)
+        
+  
+      })
+  
+    })
 
   Cypress.Commands.add('submitFormDetails', function(){
 
