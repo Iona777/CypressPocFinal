@@ -23,6 +23,7 @@ const cartPage = new CartPage()
 const confirmationPage = new ConfirmationPage()
 
 
+
 Given(`I am on the ecommn practice login page`, () => {
 
     //NOTE: changes to cypress.config file are not always picked up on save, so you may get an undefined error when first using Cypress.env() 
@@ -42,13 +43,13 @@ When('I login to the application', function () {
     //Product page
     productPage.pageValidation()
     productPage.getCardCount().should('have.length', 4)
-    
+
 
 })
 
-When('I login to the application portal', function(dataTable){
+When('I login to the application portal', function (dataTable) {
 
-    homePage.login(dataTable.rawTable[1][0],dataTable.rawTable[1][1])
+    homePage.login(dataTable.rawTable[1][0], dataTable.rawTable[1][1])
 
     //Product page
     productPage.pageValidation()
@@ -72,8 +73,8 @@ And('Validate the total price limit', function () {
 
     //Cart page
     cartPage.sumOfProducts().then(function (sum) {
-    //Putting the assertion in the test insstead of the function
-    expect(sum).to.be.lessThan(200000)
+        //Putting the assertion in the test insstead of the function
+        expect(sum).to.be.lessThan(200000)
 
     })
 
@@ -88,8 +89,7 @@ Then('select the country submit and verify success message', function () {
 })
 
 
- And ('I add the following items to Cart and checkout {string}, {string}, {string}', function(item1, item2, item3)
-{
+And('I add the following items to Cart and checkout {string}, {string}, {string}', function (item1, item2, item3) {
     productPage.selectProduct(item1)
     productPage.selectProduct(item2)
     productPage.selectProduct(item3)
@@ -99,21 +99,62 @@ Then('select the country submit and verify success message', function () {
 
 })
 
-And('I take note of sum of products', function(){
+And('I take note of sum of products', function () {
 
-cartPage.getTotalCost()
+
+    //the value returned from getTotalCost() seems to need to be passed into a function to be used properly
+    cartPage.getTotalCost(5, 4)
+        .then(function (amount) {
+            //Set value of total cost at this point. Seems that defining originalTotalCost at top of file has no effect, seems only constants can be declared there. 
+            // It is declared as a 'class' variable here and becomes avaiable to all methods from this point on.
+            this.originalTotalCost = amount
+            cy.log("Original total cost is (should be 235,000)" + this.originalTotalCost)
+
+        })
+        //Don't try logging the value of this.originalTotalCost here. Due to asynchronous problems, this could get executed before code above and give wrong value
+       
 
 })
 
-And ('I change the quantity of each item to {int}', function(newQuantity){
+And('I change the quantity of each item to {int}', function (newQuantity) {
 
     cartPage.amendQuantity(newQuantity)
 
 })
 
-And ('I remove {string}', function(itemToRemove)
-{
+And('I remove {string}', function (itemToRemove) {
 
     cartPage.removeItem(itemToRemove)
+
+})
+
+Then('the the new sum of products should be {string} than the previous one', function (comparison) {
+
+
+    //the value returned from getTotalCost() seems to need to be passed into a function to be used properly
+    cartPage.getTotalCost(5, 3)
+        .then(function (amount) {
+            //We keep the class variable this.originalTotalCost unchanged and set a new variable. Can get a way with a local variable now
+            switch (comparison) {
+                case "higher":
+                    cy.wrap(amount).should('be.greaterThan', this.originalTotalCost)
+                    break;
+                case "lower":
+                    cy.wrap(amount).should('be.lessThan', this.originalTotalCost)
+                    break;
+                case "same":
+                    cy.wrap(amount).should.equal(this.originalTotalCost)
+                    break;
+                default:
+                    cy.log("invalid comparison string")
+
+
+            }
+
+        })
+
+
+   
+
 
 })

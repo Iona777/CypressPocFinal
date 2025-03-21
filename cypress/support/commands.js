@@ -33,7 +33,9 @@ Cypress.Commands.add('getTableCellText', function (colNo, rowNo,) {
   //This boils down to:
   //Cy.get().find() etc. - gets cell element
   //.invoke - calls the JQuery text command to return the text of the element
-   return cy.get('table').find('tr').eq(rowNo).find('td').eq(colNo - 1)
+   return cy.get('table')
+   .find('tr').eq(rowNo)
+   .find('td').eq(colNo - 1)
    .invoke('text')
   })
 
@@ -49,6 +51,8 @@ Cypress.Commands.add('getTableCellText', function (colNo, rowNo,) {
       })
   
     })
+
+
 
   Cypress.Commands.add('submitFormDetails', function(){
 
