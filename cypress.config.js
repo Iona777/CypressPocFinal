@@ -43,9 +43,9 @@ module.exports = defineConfig({
 
     setupNodeEvents,
 
-    //specPattern: "cypress/e2e/*js",
-    specPattern: "**/*.feature",
+    specPattern: "cypress/e2e/*js",
+    //specPattern: "**/*.feature",
     supportFile: "cypress/support/e2e.js",
-    setupNodeEvents,
+    experimentalStudio: true //this allows you to use the Cypress Studio to record and play 
   },
 });

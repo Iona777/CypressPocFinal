@@ -22,6 +22,8 @@ const productPage = new ProductPage()
 const cartPage = new CartPage()
 const confirmationPage = new ConfirmationPage()
 
+cy.contains('ll').children(9)
+
 
 
 Given(`I am on the ecommn practice login page`, () => {
